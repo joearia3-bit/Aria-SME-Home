@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#dff3ff"
+    >
+
+    <meta
+        name="description"
+        content="ARIA SME HUB - Discover business opportunities, jobs, markets and connections."
+    >
+
+    <title>ARIA SME HUB</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================================
+         HEADER
+         ================================ -->
+
+    <header class="site-header">
+
+        <a
+            href="#home"
+            class="brand"
+            aria-label="ARIA SME HUB Home"
+        >
+            <span class="brand-mark">A</span>
+
+            <span class="brand-name">
+                <strong>ARIA</strong>
+                <small>SME HUB</small>
+            </span>
+        </a>
+
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            <span>Phase 1</span>
+        </div>
+
+    </header>
+
+
+    <!-- ================================
+         MAIN
+         ================================ -->
+
+    <main id="home">
+
+
+        <!-- ================================
+             HERO
+             ================================ -->
+
+        <section class="hero">
+
+            <p class="eyebrow">
+                YOUR IDEAS. YOUR SKILLS. YOUR FUTURE.
+            </p>
+
+            <h1>
+                Discover your next
+                <span>opportunity.</span>
+            </h1>
+
+            <p class="hero-description">
+                Show ARIA what you have, tell ARIA what you can do,
+                or describe what you need. Start turning possibilities
+                into practical steps.
+            </p>
+
+            <div class="hero-actions">
+
+                <a
+                    href="#scan"
+                    class="button button-primary"
+                >
+                    📸 Scan With ARIA
+                </a>
+
+                <a
+                    href="#talk"
+                    class="button button-secondary"
+                >
+                    💬 Talk With ARIA
+                </a>
+
+                <a
+                    href="#opportunities"
+                    class="button button-secondary"
+                >
+                    💡 Find an Opportunity
+                </a>
+
+                <a
+                    href="#action-plan"
+                    class="button button-secondary"
+                >
+                    📋 My Action Plan
+                </a>
+
+            </div>
+
+
+            <div class="feature-strip">
+
+                <span>📷 Products</span>
+
+                <span>🛠️ Skills</span>
+
+                <span>💼 Business</span>
+
+                <span>🌏 Markets</span>
+
+                <span>📋 Action Plans</span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================
+             SCAN WITH ARIA
+             ================================ -->
+
+        <section
+            class="section"
+            id="scan"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-icon">
+                    📸
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        START WITH WHAT YOU HAVE
+                    </p>
+
+                    <h2>
+                        Scan With ARIA
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <p class="muted">
+                    Choose a photo of your product, crop, fish,
+                    craft, equipment, natural resource, or other item.
+                </p>
+
+
+                <!-- IMPORTANT:
+                     Hidden file input.
+                     JavaScript opens this when
+                     Choose Image is pressed.
+                -->
+
+                <input
+                    id="imageInput"
+                    type="file"
+                    accept="image/*"
+                    hidden
+                >
+
+
+                <!-- CHOOSE IMAGE BUTTON -->
+
+                <button
+                    id="imageButton"
+                    class="button button-secondary full-width"
+                    type="button"
+                >
+                    📁 Choose Image
+                </button>
+
+
+                <!-- IMAGE PREVIEW -->
+
+                <div
+                    id="scanPreview"
+                    class="scan-preview"
+                    hidden
+                >
+
+                    <img
+                        id="previewImage"
+                        src=""
+                        alt="Selected image preview"
+                    >
+
+
+                    <div class="preview-details">
+
+                        <strong id="imageName">
+                            Selected image
+                        </strong>
+
+                        <span
+                            id="imageSize"
+                            class="muted"
+                        ></span>
+
+                    </div>
+
+
+                    <button
+                        id="removeImageButton"
+                        class="text-button"
+                        type="button"
+                    >
+                        Remove Image
+                    </button>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <label
+                    for="scanDescription"
+                >
+                    Tell ARIA what is in the image
+                </label>
+
+
+                <textarea
+                    id="scanDescription"
+                    rows="4"
+                    placeholder="Example: I have fresh fish from the sea. I live near a local market and have K100 to start."
+                ></textarea>
+
+
+                <p class="small-note">
+                    Describe the item, where you are located,
+                    what you have available, and what you want
+                    to achieve.
+                </p>
+
+
+                <!-- ANALYZE BUTTON -->
+
+                <button
+                    id="analyzeButton"
+                    class="button button-primary full-width"
+                    type="button"
+                >
+                    🔎 Find Opportunities
+                </button>
+
+
+                <!-- STATUS -->
+
+                <p
+                    id="scanStatus"
+                    class="status-message"
+                    aria-live="polite"
+                ></p>
+
+
+                <!-- RESULTS -->
+
+                <div
+                    id="scanResults"
+                    class="results-area"
+                    hidden
+                ></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================
+             TALK WITH ARIA
+             ================================ -->
+
+        <section
+            class="section"
+            id="talk"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-icon">
+                    💬
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        LET'S TALK BUSINESS
+                    </p>
+
+                    <h2>
+                        Talk With ARIA
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+
+                <!-- CHAT AREA -->
+
+                <div
+                    id="chatMessages"
+                    class="chat-messages"
+                    aria-live="polite"
+                >
+
+                    <div class="chat-message aria-message">
+
+                        <strong>
+                            ARIA
+                        </strong>
+
+                        <p>
+                            Hello! Tell me what you have,
+                            what skills you possess, or what
+                            kind of income opportunity you
+                            are looking for.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CHAT FORM -->
+
+                <form
+                    id="chatForm"
+                    class="chat-form"
+                >
+
+                    <label
+                        class="visually-hidden"
+                        for="chatInput"
+                    >
+                        Your message
+                    </label>
+
+
+                    <textarea
+                        id="chatInput"
+                        rows="2"
+                        placeholder="Ask ARIA a business question..."
+                        required
+                    ></textarea>
+
+
+                    <button
+                        class="button button-primary"
+                        type="submit"
+                    >
+                        Send
+                    </button>
+
+                </form>
+
+
+                <p class="small-note">
+                    ARIA can help you explore skills,
+                    resources, business ideas, customers,
+                    markets and practical next steps.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================
+             FIND AN OPPORTUNITY
+             ================================ -->
+
+        <section
+            class="section"
+            id="opportunities"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-icon">
+                    💡
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        TURN IDEAS INTO ACTION
+                    </p>
+
+                    <h2>
+                        Find an Opportunity
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+
+                <label
+                    for="opportunityInput"
+                >
+                    What do you have, know, or want to do?
+                </label>
+
+
+                <textarea
+                    id="opportunityInput"
+                    rows="4"
+                    placeholder="Example: I can bake cakes, but I don't know how to find customers."
+                ></textarea>
+
+
+                <button
+                    id="findOpportunityButton"
+                    class="button button-primary full-width"
+                    type="button"
+                >
+                    🚀 Generate My Opportunities
+                </button>
+
+
+                <p
+                    id="opportunityStatus"
+                    class="status-message"
+                    aria-live="polite"
+                ></p>
+
+
+                <div
+                    id="opportunityResults"
+                    class="results-area"
+                    hidden
+                ></div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================
+             MY ACTION PLAN
+             ================================ -->
+
+        <section
+            class="section"
+            id="action-plan"
+        >
+
+            <div class="section-heading">
+
+                <span class="section-icon">
+                    📋
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        YOUR NEXT STEPS
+                    </p>
+
+                    <h2>
+                        My Action Plan
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div id="actionPlanContent">
+
+                    <div class="empty-state">
+
+                        <span class="empty-icon">
+                            📝
+                        </span>
+
+                        <h3>
+                            Your plan starts here
+                        </h3>
+
+                        <p>
+                            Generate an opportunity and select
+                            "Save to My Action Plan".
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="plan-actions">
+
+                    <button
+                        id="printPlanButton"
+                        class="button button-secondary"
+                        type="button"
+                    >
+                        🖨️ Print Plan
+                    </button>
+
+
+                    <button
+                        id="clearPlanButton"
+                        class="button button-danger"
+                        type="button"
+                    >
+                        🗑️ Clear Plan
+                    </button>
+
+                </div>
+
+
+                <p class="small-note">
+                    Your saved plan stays in this browser
+                    on this device.
+                </

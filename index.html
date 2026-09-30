@@ -172,9 +172,23 @@
                 <!-- IMPORTANT:
                      Hidden file input.
                                 <input
+                    id="cameraInput"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    hidden
+                >
+                                <input
                 <input
     id="cameraInput"
     type="file"
+                                <button
+                    id="cameraButton"
+                    class="button button-secondary full-width"
+                    type="button"
+                >
+                    📷 Take Photo
+                </button>
     accept="image/*"
     capture="environment"
     hidden

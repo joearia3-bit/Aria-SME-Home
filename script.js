@@ -2,11 +2,10 @@
 
 /* =========================================================
    ARIA SME HUB
-   PHASE 1 - SCRIPT.JS
+   PHASE 1 - COMPLETE SCRIPT
    ========================================================= */
 
 const STORAGE_KEY = "ariaSMEHubPhase1ActionPlan";
-
 
 /* =========================================================
    GET HTML ELEMENTS
@@ -78,7 +77,7 @@ let savedPlan = loadSavedPlan();
 
 
 /* =========================================================
-   STARTUP
+   YEAR
    ========================================================= */
 
 if (currentYear) {
@@ -86,15 +85,12 @@ if (currentYear) {
         new Date().getFullYear();
 }
 
-renderActionPlan();
-
 
 /* =========================================================
    HELPER FUNCTIONS
    ========================================================= */
 
 function normaliseText(value) {
-
     return String(value || "")
         .toLowerCase()
         .replace(/[^\p{L}\p{N}\s]/gu, " ")
@@ -104,7 +100,6 @@ function normaliseText(value) {
 
 
 function escapeHTML(value) {
-
     return String(value ?? "")
         .replace(/[&<>"']/g, function (character) {
 
@@ -121,13 +116,6 @@ function escapeHTML(value) {
 }
 
 
-function formatKina(amount) {
-
-    return "K" +
-        Number(amount || 0).toLocaleString("en-PG");
-}
-
-
 function setStatus(element, message) {
 
     if (element) {
@@ -136,30 +124,22 @@ function setStatus(element, message) {
 }
 
 
-function showResults(element, html) {
+function formatKina(amount) {
 
-    if (!element) {
-        return;
+    const number =
+        Number(amount);
+
+    if (!Number.isFinite(number)) {
+        return "K0";
     }
 
-    element.innerHTML = html;
-    element.hidden = false;
-}
-
-
-function hideResults(element) {
-
-    if (!element) {
-        return;
-    }
-
-    element.innerHTML = "";
-    element.hidden = true;
+    return "K" +
+        number.toLocaleString("en-PG");
 }
 
 
 /* =========================================================
-   IMAGE SELECTION
+   IMAGE SELECTOR
    ========================================================= */
 
 if (imageButton && imageInput) {
@@ -170,8 +150,16 @@ if (imageButton && imageInput) {
 
             event.preventDefault();
 
+            /*
+             * Reset the input so the same image
+             * can be selected again.
+             */
             imageInput.value = "";
 
+            /*
+             * Open the phone's normal
+             * file/image picker.
+             */
             imageInput.click();
         }
     );
@@ -188,10 +176,15 @@ if (imageButton && imageInput) {
                 return;
             }
 
+
             const file =
                 imageInput.files[0];
 
 
+            /*
+             * Make sure the selected file
+             * is an image.
+             */
             if (
                 !file.type ||
                 !file.type.startsWith("image/")
@@ -207,6 +200,10 @@ if (imageButton && imageInput) {
             }
 
 
+            /*
+             * Maximum image size:
+             * 8 MB
+             */
             const maximumSize =
                 8 * 1024 * 1024;
 
@@ -223,6 +220,9 @@ if (imageButton && imageInput) {
             }
 
 
+            /*
+             * Release previous preview URL.
+             */
             if (selectedImageUrl) {
 
                 URL.revokeObjectURL(
@@ -233,10 +233,17 @@ if (imageButton && imageInput) {
 
             selectedImageFile = file;
 
+
+            /*
+             * Create temporary preview URL.
+             */
             selectedImageUrl =
                 URL.createObjectURL(file);
 
 
+            /*
+             * Display preview.
+             */
             if (previewImage) {
 
                 previewImage.src =
@@ -247,6 +254,9 @@ if (imageButton && imageInput) {
             }
 
 
+            /*
+             * Display filename.
+             */
             if (imageName) {
 
                 imageName.textContent =
@@ -254,6 +264,9 @@ if (imageButton && imageInput) {
             }
 
 
+            /*
+             * Display file size.
+             */
             if (imageSize) {
 
                 imageSize.textContent =
@@ -266,7 +279,11 @@ if (imageButton && imageInput) {
             }
 
 
+            /*
+             * Show preview section.
+             */
             if (scanPreview) {
+
                 scanPreview.hidden = false;
             }
 
@@ -321,10 +338,7 @@ function clearSelectedImage() {
 
 
     if (previewImage) {
-
-        previewImage.removeAttribute(
-            "src"
-        );
+        previewImage.removeAttribute("src");
     }
 
 
@@ -369,7 +383,9 @@ function detectCategory(text) {
                 "crabs",
                 "squid",
                 "lobster",
-                "lobsters"
+                "lobsters",
+                "ocean",
+                "sea"
             ]
         },
 
@@ -456,76 +472,130 @@ function detectCategory(text) {
                 "plumbing",
                 "electrical",
                 "electric",
-                "mechanic",
-                "mechanical",
                 "welding",
                 "welder",
-                "painting"
+                "mechanic",
+                "mechanical",
+                "painting",
+                "brick",
+                "concrete"
             ]
         },
 
 
         {
-            name: "Transport and services",
+            name: "Transport and delivery",
 
             words: [
-                "transport",
-                "taxi",
+                "car",
+                "vehicle",
+                "truck",
                 "bus",
-                "pmv",
+                "taxi",
+                "transport",
                 "driver",
                 "driving",
                 "delivery",
-                "deliveries",
-                "courier"
+                "deliver",
+                "boat"
             ]
         },
 
 
         {
-            name: "Technology and digital services",
+            name: "Technology and digital",
 
             words: [
                 "computer",
                 "phone",
                 "mobile",
                 "internet",
+                "online",
                 "website",
                 "digital",
-                "software",
-                "coding",
+                "technology",
+                "tech",
                 "design",
-                "printing",
-                "online"
+                "coding",
+                "code",
+                "social media"
+            ]
+        },
+
+
+        {
+            name: "Retail and trading",
+
+            words: [
+                "shop",
+                "store",
+                "selling",
+                "sell",
+                "sales",
+                "trade",
+                "trading",
+                "market",
+                "customer",
+                "customers"
+            ]
+        },
+
+
+        {
+            name: "Tourism and services",
+
+            words: [
+                "tourism",
+                "tourist",
+                "hotel",
+                "guesthouse",
+                "travel",
+                "tour",
+                "guide",
+                "hospitality",
+                "cleaning",
+                "laundry"
             ]
         }
 
     ];
 
 
-    let bestCategory = "General business opportunity";
-    let bestScore = 0;
+    let bestCategory =
+        "General business opportunity";
+
+    let highestScore = 0;
 
 
-    categories.forEach(function (category) {
+    categories.forEach(
+        function (category) {
 
-        let score = 0;
+            let score = 0;
 
 
-        category.words.forEach(function (word) {
+            category.words.forEach(
+                function (word) {
 
-            if (value.includes(word)) {
-                score++;
+                    if (
+                        value.includes(
+                            normaliseText(word)
+                        )
+                    ) {
+                        score++;
+                    }
+                }
+            );
+
+
+            if (score > highestScore) {
+
+                highestScore = score;
+
+                bestCategory =
+                    category.name;
             }
-        });
-
-
-        if (score > bestScore) {
-
-            bestScore = score;
-            bestCategory = category.name;
         }
-    });
+    );
 
 
     return bestCategory;
@@ -533,247 +603,493 @@ function detectCategory(text) {
 
 
 /* =========================================================
-   OPPORTUNITY GENERATOR
+   GENERATE OPPORTUNITIES
    ========================================================= */
 
 function generateOpportunities(text) {
 
-    const value =
-        normaliseText(text);
-
     const category =
-        detectCategory(value);
+        detectCategory(text);
 
 
     const opportunities = [];
 
 
-    if (
-        value.includes("fish") ||
-        value.includes("fishing") ||
-        value.includes("seafood") ||
-        value.includes("crab") ||
-        value.includes("prawn") ||
-        value.includes("squid")
-    ) {
+    if (category === "Fishing and seafood") {
 
-        opportunities.push({
-            title: "Fresh seafood sales",
-            description:
-                "Sell fresh seafood directly to households, markets, restaurants or small food businesses.",
-            action:
-                "Identify three nearby buyers and compare their prices before selling."
-        });
+        opportunities.push(
+            {
+                title: "Fresh seafood sales",
+                description:
+                    "Sell cleaned and fresh fish or seafood directly to households, markets, shops or food businesses.",
+                firstStep:
+                    "Identify three nearby customers or selling points.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Buy or catch fresh seafood, prepare it safely and sell in small quantities."
+            }
+        );
 
-        opportunities.push({
-            title: "Prepared seafood",
-            description:
-                "Clean, portion, cook or package seafood to create a higher-value product.",
-            action:
-                "Start with a small batch and calculate your cost and selling price."
-        });
 
-        opportunities.push({
-            title: "Regular seafood supply",
-            description:
-                "Build relationships with repeat customers who need seafood regularly.",
-            action:
-                "Ask potential customers what quantity and delivery schedule they need."
-        });
+        opportunities.push(
+            {
+                title: "Value-added seafood",
+                description:
+                    "Explore cleaning, portioning, smoking, drying or packaging seafood for customers.",
+                firstStep:
+                    "Choose one simple product that can be prepared safely.",
+                startingCost:
+                    "Medium",
+                incomeIdea:
+                    "Turn raw seafood into a more convenient product with a higher selling value."
+            }
+        );
 
-    } else if (
-        value.includes("farm") ||
-        value.includes("garden") ||
-        value.includes("crop") ||
-        value.includes("vegetable") ||
-        value.includes("cocoa") ||
-        value.includes("coffee") ||
-        value.includes("coconut")
-    ) {
 
-        opportunities.push({
-            title: "Local produce sales",
-            description:
-                "Sell fresh produce directly to households, markets, shops or food businesses.",
-            action:
-                "Find out which products have reliable local demand."
-        });
-
-        opportunities.push({
-            title: "Value-added produce",
-            description:
-                "Process or package produce so it can be sold at a higher value.",
-            action:
-                "Choose one product and calculate the cost of producing a small batch."
-        });
-
-        opportunities.push({
-            title: "Regular supply business",
-            description:
-                "Supply produce consistently to a shop, restaurant, market seller or institution.",
-            action:
-                "Contact three possible buyers and ask about their weekly requirements."
-        });
+        opportunities.push(
+            {
+                title: "Seafood supply service",
+                description:
+                    "Supply regular seafood orders to restaurants, food sellers and households.",
+                firstStep:
+                    "Ask five potential customers what seafood they regularly need.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Build repeat customers through reliable supply and consistent quality."
+            }
+        );
 
     } else if (
-        value.includes("cake") ||
-        value.includes("bake") ||
-        value.includes("bread") ||
-        value.includes("food") ||
-        value.includes("cook") ||
-        value.includes("catering")
+        category === "Farming and produce"
     ) {
 
-        opportunities.push({
-            title: "Made-to-order food",
-            description:
-                "Take orders for cakes, snacks, meals or other food products.",
-            action:
-                "Start with one product that you can make consistently."
-        });
+        opportunities.push(
+            {
+                title: "Fresh produce selling",
+                description:
+                    "Grow or collect useful crops and sell directly to households, markets and shops.",
+                firstStep:
+                    "List the produce you already have and identify nearby buyers.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Sell fresh produce in convenient quantities."
+            }
+        );
 
-        opportunities.push({
-            title: "Event catering",
-            description:
-                "Provide food for meetings, church events, celebrations and community activities.",
-            action:
-                "Create a simple menu with clear prices."
-        });
 
-        opportunities.push({
-            title: "Local food delivery",
-            description:
-                "Sell prepared food to nearby workers, families or small businesses.",
-            action:
-                "Identify a small delivery area and calculate your delivery cost."
-        });
+        opportunities.push(
+            {
+                title: "Value-added farm products",
+                description:
+                    "Explore drying, processing, packaging or preparing farm products for customers.",
+                firstStep:
+                    "Choose one crop that is available regularly.",
+                startingCost:
+                    "Medium",
+                incomeIdea:
+                    "Create a product that can last longer or be sold at a higher value."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Small-scale farm supply",
+                description:
+                    "Supply produce directly to food sellers, restaurants or other businesses.",
+                firstStep:
+                    "Ask local businesses what produce they buy regularly.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Build repeat orders from reliable customers."
+            }
+        );
 
     } else if (
-        value.includes("craft") ||
-        value.includes("bilum") ||
-        value.includes("weaving") ||
-        value.includes("sewing") ||
-        value.includes("carving") ||
-        value.includes("handmade")
+        category === "Food and baking"
     ) {
 
-        opportunities.push({
-            title: "Handmade product sales",
-            description:
-                "Sell locally made crafts, clothing, carvings, bilums or other handmade products.",
-            action:
-                "Photograph three products and create simple prices."
-        });
+        opportunities.push(
+            {
+                title: "Food and snack sales",
+                description:
+                    "Prepare simple food or snacks and sell where there is regular customer demand.",
+                firstStep:
+                    "Choose one product and identify a busy selling location.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Start with small quantities and reinvest the profit."
+            }
+        );
 
-        opportunities.push({
-            title: "Custom orders",
-            description:
-                "Create products based on customer requests.",
-            action:
-                "Ask potential customers what designs or products they want."
-        });
 
-        opportunities.push({
-            title: "Online market opportunity",
-            description:
-                "Use digital channels to reach customers beyond your immediate community.",
-            action:
-                "Prepare clear product photos, prices and contact information."
-        });
+        opportunities.push(
+            {
+                title: "Custom baking",
+                description:
+                    "Offer cakes, bread or other baked products for birthdays, meetings and events.",
+                firstStep:
+                    "Create a simple menu with three products.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Take advance orders so ingredients are purchased for confirmed customers."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Small catering service",
+                description:
+                    "Provide food for meetings, community events, workplaces and family functions.",
+                firstStep:
+                    "Create one affordable catering package.",
+                startingCost:
+                    "Medium",
+                incomeIdea:
+                    "Charge per person or per event."
+            }
+        );
 
     } else if (
-        value.includes("repair") ||
-        value.includes("construction") ||
-        value.includes("carpenter") ||
-        value.includes("plumbing") ||
-        value.includes("electrical") ||
-        value.includes("welding") ||
-        value.includes("mechanic")
+        category === "Arts and crafts"
     ) {
 
-        opportunities.push({
-            title: "Local repair service",
-            description:
-                "Offer practical repair and maintenance services to households and businesses.",
-            action:
-                "List the five services you can perform confidently."
-        });
+        opportunities.push(
+            {
+                title: "Local craft sales",
+                description:
+                    "Sell handmade products to local customers, visitors and businesses.",
+                firstStep:
+                    "Choose your three strongest products.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Produce small batches and sell directly."
+            }
+        );
 
-        opportunities.push({
-            title: "Construction service",
-            description:
-                "Provide small construction, maintenance or improvement services.",
-            action:
-                "Create a simple service list and starting price guide."
-        });
 
-        opportunities.push({
-            title: "Mobile service",
-            description:
-                "Travel to customers instead of requiring them to bring equipment to you.",
-            action:
-                "Calculate transport costs before setting your service price."
-        });
+        opportunities.push(
+            {
+                title: "Online craft market",
+                description:
+                    "Photograph your products and explore online customers and wider markets.",
+                firstStep:
+                    "Take clear photos and create a simple product list.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Reach customers beyond your immediate community."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Custom-made products",
+                description:
+                    "Make products according to customer requests.",
+                firstStep:
+                    "Create examples of products customers can order.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Charge according to materials, time and design."
+            }
+        );
 
     } else if (
-        value.includes("computer") ||
-        value.includes("phone") ||
-        value.includes("internet") ||
-        value.includes("website") ||
-        value.includes("digital") ||
-        value.includes("coding") ||
-        value.includes("printing")
+        category === "Repair and construction"
     ) {
 
-        opportunities.push({
-            title: "Digital service business",
-            description:
-                "Provide computer, phone, design, printing, online or digital support services.",
-            action:
-                "Choose one service you can deliver reliably."
-        });
+        opportunities.push(
+            {
+                title: "Local repair service",
+                description:
+                    "Offer practical repair services to households and small businesses.",
+                firstStep:
+                    "List the repairs you can safely perform.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Charge for labour and materials."
+            }
+        );
 
-        opportunities.push({
-            title: "Small business digital support",
-            description:
-                "Help local businesses with menus, flyers, documents, social media or basic websites.",
-            action:
-                "Prepare one sample service to show potential customers."
-        });
 
-        opportunities.push({
-            title: "Training service",
-            description:
-                "Teach basic digital skills to individuals, students or small businesses.",
-            action:
-                "Create a simple beginner lesson and price."
-        });
+        opportunities.push(
+            {
+                title: "Construction support service",
+                description:
+                    "Provide skilled or general construction support where appropriate.",
+                firstStep:
+                    "Identify your strongest construction skills.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Work on small jobs and build a customer reputation."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Maintenance service",
+                description:
+                    "Offer regular maintenance to homes, shops and small businesses.",
+                firstStep:
+                    "Create a simple list of maintenance services.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Develop repeat customers through scheduled maintenance."
+            }
+        );
+
+    } else if (
+        category === "Transport and delivery"
+    ) {
+
+        opportunities.push(
+            {
+                title: "Local delivery service",
+                description:
+                    "Help businesses and households move goods locally.",
+                firstStep:
+                    "Identify areas and delivery needs you can safely serve.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Charge per delivery or distance."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Business transport support",
+                description:
+                    "Provide reliable transport support to small businesses.",
+                firstStep:
+                    "Speak with local businesses about their regular transport needs.",
+                startingCost:
+                    "Medium",
+                incomeIdea:
+                    "Build repeat business accounts."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Scheduled community transport",
+                description:
+                    "Explore regular transport services where there is genuine local demand.",
+                firstStep:
+                    "Research routes, demand, costs and required permissions.",
+                startingCost:
+                    "Medium to high",
+                incomeIdea:
+                    "Use scheduled services and repeat customers."
+            }
+        );
+
+    } else if (
+        category === "Technology and digital"
+    ) {
+
+        opportunities.push(
+            {
+                title: "Digital services",
+                description:
+                    "Help individuals and small businesses with simple digital tasks.",
+                firstStep:
+                    "List the digital skills you can already provide.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Charge per task or service package."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Website and social media support",
+                description:
+                    "Help small businesses create and maintain basic online presence.",
+                firstStep:
+                    "Create one sample business page or website.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Charge for setup and ongoing support."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Digital learning service",
+                description:
+                    "Teach useful phone, computer or online skills to others.",
+                firstStep:
+                    "Choose one skill people around you need.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Offer short practical lessons."
+            }
+        );
+
+    } else if (
+        category === "Retail and trading"
+    ) {
+
+        opportunities.push(
+            {
+                title: "Small retail business",
+                description:
+                    "Sell products that people regularly need in your local area.",
+                firstStep:
+                    "Identify five products with consistent local demand.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Buy carefully, price fairly and reinvest profits."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Market trading",
+                description:
+                    "Buy or produce useful products and sell them through local markets.",
+                firstStep:
+                    "Research customer demand and competitor prices.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Focus on products with enough margin after transport and other costs."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Order-based selling",
+                description:
+                    "Take customer orders before buying larger quantities.",
+                firstStep:
+                    "Find products customers already ask for.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Reduce unsold stock by buying against confirmed demand."
+            }
+        );
+
+    } else if (
+        category === "Tourism and services"
+    ) {
+
+        opportunities.push(
+            {
+                title: "Local service business",
+                description:
+                    "Offer a useful service to households, visitors or businesses.",
+                firstStep:
+                    "Choose one service you can deliver reliably.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Charge per service or package."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Tourism support service",
+                description:
+                    "Explore practical services for visitors, guides, accommodation or local experiences.",
+                firstStep:
+                    "Identify a local attraction and what visitors need.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Charge for agreed services or experiences."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Cleaning and maintenance service",
+                description:
+                    "Provide cleaning or basic maintenance for homes and businesses.",
+                firstStep:
+                    "Create a simple service and price list.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Build repeat customers through reliable service."
+            }
+        );
 
     } else {
 
-        opportunities.push({
-            title: "Local service business",
-            description:
-                "Turn your existing skill, resource or experience into a service for people nearby.",
-            action:
-                "Write down three things you can do better than the average person."
-        });
+        opportunities.push(
+            {
+                title: "Turn your existing skill into income",
+                description:
+                    "Identify something you already know how to do and find people willing to pay for it.",
+                firstStep:
+                    "Write down your three strongest skills.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Start with a small service and improve it from customer feedback."
+            }
+        );
 
-        opportunities.push({
-            title: "Buy and sell opportunity",
-            description:
-                "Find products people need locally and connect suppliers with customers.",
-            action:
-                "Ask five people what products they regularly struggle to find."
-        });
 
-        opportunities.push({
-            title: "Small-scale production",
-            description:
-                "Create a simple product from resources or skills already available to you.",
-            action:
-                "Choose one product and calculate the cost of making one unit."
-        });
+        opportunities.push(
+            {
+                title: "Sell what is available locally",
+                description:
+                    "Look at resources, products or services already available around you.",
+                firstStep:
+                    "List five things you can access easily.",
+                startingCost:
+                    "Low to medium",
+                incomeIdea:
+                    "Find a buyer before spending heavily."
+            }
+        );
+
+
+        opportunities.push(
+            {
+                title: "Solve a local problem",
+                description:
+                    "Look for a common problem in your community and create a simple service around it.",
+                firstStep:
+                    "Ask five people what problem they would pay someone to solve.",
+                startingCost:
+                    "Low",
+                incomeIdea:
+                    "Start with one customer and improve the service."
+            }
+        );
     }
 
 
@@ -790,100 +1106,126 @@ function generateOpportunities(text) {
 
 function displayOpportunities(
     result,
-    targetElement
+    container
 ) {
 
-    if (!targetElement) {
+    if (!container) {
         return;
     }
 
 
-    let html = "";
+    const cards =
+        result.opportunities
+            .map(
+                function (opportunity, index) {
+
+                    return `
+                        <article class="result-card">
+
+                            <p class="eyebrow">
+                                OPPORTUNITY ${index + 1}
+                            </p>
+
+                            <h3>
+                                ${escapeHTML(
+                                    opportunity.title
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHTML(
+                                    opportunity.description
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>First step:</strong>
+                                ${escapeHTML(
+                                    opportunity.firstStep
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>Starting cost:</strong>
+                                ${escapeHTML(
+                                    opportunity.startingCost
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>Income idea:</strong>
+                                ${escapeHTML(
+                                    opportunity.incomeIdea
+                                )}
+                            </p>
+
+                            <button
+                                type="button"
+                                class="button button-secondary save-opportunity-button"
+                                data-opportunity-index="${index}"
+                            >
+                                📋 Save to My Action Plan
+                            </button>
+
+                        </article>
+                    `;
+                }
+            )
+            .join("");
 
 
-    html += `
-        <div class="result-header">
-            <strong>ARIA found a starting point</strong>
-            <span>${escapeHTML(result.category)}</span>
+    container.innerHTML = `
+        <div class="results-summary">
+
+            <p class="eyebrow">
+                ARIA FOUND A DIRECTION
+            </p>
+
+            <h3>
+                ${escapeHTML(result.category)}
+            </h3>
+
+            <p>
+                Here are practical ideas to explore.
+                Check local demand, costs and customer needs
+                before spending money.
+            </p>
+
+        </div>
+
+        <div class="opportunity-list">
+            ${cards}
         </div>
     `;
 
 
-    result.opportunities.forEach(
-        function (opportunity, index) {
-
-            html += `
-                <article class="opportunity-card">
-
-                    <div class="opportunity-number">
-                        ${index + 1}
-                    </div>
-
-                    <div class="opportunity-content">
-
-                        <h3>
-                            ${escapeHTML(opportunity.title)}
-                        </h3>
-
-                        <p>
-                            ${escapeHTML(opportunity.description)}
-                        </p>
-
-                        <p class="action-text">
-                            <strong>Next step:</strong>
-                            ${escapeHTML(opportunity.action)}
-                        </p>
-
-                        <button
-                            class="button button-secondary save-opportunity-button"
-                            type="button"
-                            data-title="${escapeHTML(opportunity.title)}"
-                            data-description="${escapeHTML(opportunity.description)}"
-                            data-action="${escapeHTML(opportunity.action)}"
-                        >
-                            📋 Save to My Action Plan
-                        </button>
-
-                    </div>
-
-                </article>
-            `;
-        }
-    );
+    container.hidden = false;
 
 
-    targetElement.innerHTML = html;
-    targetElement.hidden = false;
-
-
-    const saveButtons =
-        targetElement.querySelectorAll(
+    const buttons =
+        container.querySelectorAll(
             ".save-opportunity-button"
         );
 
 
-    saveButtons.forEach(
+    buttons.forEach(
         function (button) {
 
             button.addEventListener(
                 "click",
                 function () {
 
-                    saveOpportunity({
-                        title:
-                            button.dataset.title,
+                    const index =
+                        Number(
+                            button.dataset.opportunityIndex
+                        );
 
-                        description:
-                            button.dataset.description,
+                    const opportunity =
+                        result.opportunities[index];
 
-                        action:
-                            button.dataset.action
-                    });
-
-                    button.textContent =
-                        "✓ Saved to My Action Plan";
-
-                    button.disabled = true;
+                    saveOpportunity(
+                        opportunity
+                    );
                 }
             );
         }
@@ -892,7 +1234,7 @@ function displayOpportunities(
 
 
 /* =========================================================
-   FIND OPPORTUNITY BUTTON
+   FIND AN OPPORTUNITY
    ========================================================= */
 
 if (findOpportunityButton) {
@@ -911,8 +1253,12 @@ if (findOpportunityButton) {
 
                 setStatus(
                     opportunityStatus,
-                    "Tell ARIA what you have, know, or want to do first."
+                    "Please tell ARIA what you have, what you know, or what you want to do."
                 );
+
+                if (opportunityInput) {
+                    opportunityInput.focus();
+                }
 
                 return;
             }
@@ -920,7 +1266,7 @@ if (findOpportunityButton) {
 
             setStatus(
                 opportunityStatus,
-                "ARIA is analysing your information..."
+                "ARIA is generating practical opportunities..."
             );
 
 
@@ -936,7 +1282,7 @@ if (findOpportunityButton) {
 
             setStatus(
                 opportunityStatus,
-                "Here are some practical starting opportunities."
+                "Opportunities generated."
             );
         }
     );
@@ -944,7 +1290,7 @@ if (findOpportunityButton) {
 
 
 /* =========================================================
-   SCAN ANALYSIS
+   SCAN WITH ARIA
    ========================================================= */
 
 if (analyzeButton) {
@@ -977,10 +1323,7 @@ if (analyzeButton) {
                 description;
 
 
-            if (
-                selectedImageFile &&
-                selectedImageFile.name
-            ) {
+            if (selectedImageFile) {
 
                 combinedText +=
                     " " +
@@ -1008,7 +1351,7 @@ if (analyzeButton) {
 
             setStatus(
                 scanStatus,
-                "ARIA has identified some starting opportunities."
+                "Analysis complete. These are starting opportunities to explore."
             );
         }
     );
@@ -1016,7 +1359,7 @@ if (analyzeButton) {
 
 
 /* =========================================================
-   CHAT
+   TALK WITH ARIA
    ========================================================= */
 
 if (chatForm) {
@@ -1046,11 +1389,13 @@ if (chatForm) {
             );
 
 
-            chatInput.value = "";
+            if (chatInput) {
+                chatInput.value = "";
+            }
 
 
             const response =
-                generateLocalARIAResponse(
+                createAriaResponse(
                     message
                 );
 
@@ -1072,8 +1417,12 @@ if (chatForm) {
 }
 
 
+/* =========================================================
+   CHAT MESSAGE
+   ========================================================= */
+
 function addChatMessage(
-    sender,
+    name,
     message,
     className
 ) {
@@ -1083,11 +1432,11 @@ function addChatMessage(
     }
 
 
-    const wrapper =
+    const messageElement =
         document.createElement("div");
 
 
-    wrapper.className =
+    messageElement.className =
         "chat-message " +
         className;
 
@@ -1095,41 +1444,71 @@ function addChatMessage(
     const strong =
         document.createElement("strong");
 
-
     strong.textContent =
-        sender;
+        name;
 
 
     const paragraph =
         document.createElement("p");
 
-
     paragraph.textContent =
         message;
 
 
-    wrapper.appendChild(strong);
-    wrapper.appendChild(paragraph);
+    messageElement.appendChild(
+        strong
+    );
+
+    messageElement.appendChild(
+        paragraph
+    );
 
 
-    chatMessages.appendChild(wrapper);
+    chatMessages.appendChild(
+        messageElement
+    );
 
 
-    wrapper.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
-    });
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
 }
 
 
 /* =========================================================
-   LOCAL ARIA RESPONSE
+   ARIA CHAT RESPONSE
    ========================================================= */
 
-function generateLocalARIAResponse(message) {
+function createAriaResponse(message) {
 
     const value =
         normaliseText(message);
+
+
+    /*
+     * Basic Tok Pisin recognition.
+     * ARIA responds in English by default.
+     */
+    const tokPisinWords = [
+        "moni",
+        "wok",
+        "haus",
+        "pis",
+        "maket",
+        "bisnis",
+        "helpim",
+        "mekim",
+        "gutpela",
+        "sapos",
+        "olsem"
+    ];
+
+
+    const containsTokPisin =
+        tokPisinWords.some(
+            function (word) {
+                return value.includes(word);
+            }
+        );
 
 
     if (
@@ -1138,85 +1517,80 @@ function generateLocalARIAResponse(message) {
         value.includes("what business")
     ) {
 
-        return (
-            "Start with what you already have: a skill, " +
-            "product, resource, tool, location or customer need. " +
-            "Tell me what you have and I can help turn it into " +
-            "practical opportunity ideas."
-        );
+        return "Start with what you already have: a skill, product, resource, location or customer need. Tell me what you have and I can help turn it into practical business opportunities.";
     }
 
 
     if (
         value.includes("money") ||
         value.includes("income") ||
-        value.includes("make money")
+        value.includes("make money") ||
+        value.includes("moni")
     ) {
 
-        return (
-            "A good starting point is to identify something " +
-            "people nearby already pay for. Consider your skills, " +
-            "local resources and customer demand before spending money."
-        );
+        return "Look for a simple problem people already pay to solve. Start small, confirm customer demand, control your costs and reinvest part of your profit.";
     }
 
 
     if (
+        value.includes("market") ||
+        value.includes("sell") ||
         value.includes("customer") ||
-        value.includes("customers") ||
-        value.includes("buyer") ||
-        value.includes("buyers")
+        value.includes("buyer")
     ) {
 
-        return (
-            "Start by identifying who needs your product or service. " +
-            "Then ask potential customers what they currently buy, " +
-            "how much they pay and what problem you could solve."
-        );
+        return "Start by identifying who needs your product or service. Speak with potential customers directly, ask what they currently buy, and compare local prices before investing.";
     }
 
 
     if (
-        value.includes("png") ||
-        value.includes("papua new guinea")
+        value.includes("skill") ||
+        value.includes("can do") ||
+        value.includes("wok")
     ) {
 
-        return (
-            "For Papua New Guinea, useful starting points include " +
-            "local food production, agriculture, fishing, transport, " +
-            "construction, repair services, crafts and digital services. " +
-            "The right opportunity depends on your location and resources."
-        );
+        return "Your skills can become income when they solve a real problem. Tell me your strongest skill and who you think might need it.";
     }
 
 
     if (
-        value.includes("tok pisin") ||
-        value.includes("wantok") ||
-        value.includes("gutpela") ||
-        value.includes("bisnis")
+        value.includes("fish") ||
+        value.includes("fishing") ||
+        value.includes("seafood") ||
+        value.includes("pis")
     ) {
 
-        return (
-            "Mi ken helpim yu long tingim bisnis idea, maket, " +
-            "ol samting yu gat, na ol step bilong stat. " +
-            "Yu ken raitim moa information na ARIA bai helpim yu."
-        );
+        return "Fishing and seafood can support several small businesses, including fresh sales, prepared seafood, supply to food sellers and direct household sales. Start by identifying reliable buyers.";
     }
 
 
-    const result =
-        generateOpportunities(message);
+    if (
+        value.includes("farm") ||
+        value.includes("garden") ||
+        value.includes("crop")
+    ) {
+
+        return "Farming opportunities can include fresh produce sales, supplying businesses, processing and value-added products. Start with products you can produce consistently and buyers who already need them.";
+    }
 
 
-    return (
-        "Based on what you told me, a possible area to explore is " +
-        result.category +
-        ". " +
-        result.opportunities[0].description +
-        " " +
-        result.opportunities[0].action
-    );
+    if (
+        value.includes("help") ||
+        value.includes("how do i") ||
+        value.includes("where do i start")
+    ) {
+
+        return "Start with three things: what you have, what you can do, and what people around you need. Give me those details and I will help you create a practical first step.";
+    }
+
+
+    if (containsTokPisin) {
+
+        return "I can recognise some Tok Pisin words and phrases. Please tell me what you have, what skill you have, or what business problem you want to solve. I will respond in English.";
+    }
+
+
+    return "I can help you explore business ideas, customers, markets, skills and practical next steps. Tell me what you have or what you want to achieve.";
 }
 
 
@@ -1228,19 +1602,19 @@ function loadSavedPlan() {
 
     try {
 
-        const saved =
+        const stored =
             localStorage.getItem(
                 STORAGE_KEY
             );
 
 
-        if (!saved) {
+        if (!stored) {
             return [];
         }
 
 
         const parsed =
-            JSON.parse(saved);
+            JSON.parse(stored);
 
 
         if (!Array.isArray(parsed)) {
@@ -1262,7 +1636,11 @@ function loadSavedPlan() {
 }
 
 
-function savePlanToStorage() {
+/* =========================================================
+   SAVE ACTION PLAN
+   ========================================================= */
+
+function persistSavedPlan() {
 
     try {
 
@@ -1287,10 +1665,311 @@ function savePlanToStorage() {
 
 function saveOpportunity(opportunity) {
 
+    if (!opportunity) {
+        return;
+    }
+
+
     const alreadySaved =
         savedPlan.some(
             function (item) {
 
-                return item.title ===
-                    opportunity.title;
+                return (
+                    item.title ===
+                    opportunity.title
+                );
             }
+        );
+
+
+    if (alreadySaved) {
+
+        alert(
+            "This opportunity is already in your Action Plan."
+        );
+
+        return;
+    }
+
+
+    const savedOpportunity = {
+
+        title:
+            opportunity.title,
+
+        description:
+            opportunity.description,
+
+        firstStep:
+            opportunity.firstStep,
+
+        startingCost:
+            opportunity.startingCost,
+
+        incomeIdea:
+            opportunity.incomeIdea,
+
+        savedAt:
+            new Date().toISOString()
+    };
+
+
+    savedPlan.push(
+        savedOpportunity
+    );
+
+
+    persistSavedPlan();
+
+    renderActionPlan();
+
+
+    alert(
+        "Opportunity saved to My Action Plan."
+    );
+
+
+    const actionPlanSection =
+        document.getElementById(
+            "action-plan"
+        );
+
+
+    if (actionPlanSection) {
+
+        actionPlanSection.scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+}
+
+
+/* =========================================================
+   RENDER ACTION PLAN
+   ========================================================= */
+
+function renderActionPlan() {
+
+    if (!actionPlanContent) {
+        return;
+    }
+
+
+    if (savedPlan.length === 0) {
+
+        actionPlanContent.innerHTML = `
+            <div class="empty-state">
+
+                <span class="empty-icon">
+                    📝
+                </span>
+
+                <h3>
+                    Your plan starts here
+                </h3>
+
+                <p>
+                    Generate an opportunity and select
+                    "Save to My Action Plan".
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    actionPlanContent.innerHTML =
+        savedPlan
+            .map(
+                function (item, index) {
+
+                    return `
+                        <article class="result-card">
+
+                            <p class="eyebrow">
+                                ACTION ${index + 1}
+                            </p>
+
+                            <h3>
+                                ${escapeHTML(
+                                    item.title
+                                )}
+                            </h3>
+
+                            <p>
+                                ${escapeHTML(
+                                    item.description
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>First step:</strong>
+                                ${escapeHTML(
+                                    item.firstStep
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>Starting cost:</strong>
+                                ${escapeHTML(
+                                    item.startingCost
+                                )}
+                            </p>
+
+                            <p>
+                                <strong>Income idea:</strong>
+                                ${escapeHTML(
+                                    item.incomeIdea
+                                )}
+                            </p>
+
+                            <button
+                                type="button"
+                                class="button button-danger remove-saved-opportunity"
+                                data-plan-index="${index}"
+                            >
+                                Remove
+                            </button>
+
+                        </article>
+                    `;
+                }
+            )
+            .join("");
+
+
+    const removeButtons =
+        actionPlanContent.querySelectorAll(
+            ".remove-saved-opportunity"
+        );
+
+
+    removeButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const index =
+                        Number(
+                            button.dataset.planIndex
+                        );
+
+
+                    if (
+                        Number.isInteger(index) &&
+                        index >= 0 &&
+                        index < savedPlan.length
+                    ) {
+
+                        savedPlan.splice(
+                            index,
+                            1
+                        );
+
+                        persistSavedPlan();
+
+                        renderActionPlan();
+                    }
+                }
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   CLEAR ACTION PLAN
+   ========================================================= */
+
+if (clearPlanButton) {
+
+    clearPlanButton.addEventListener(
+        "click",
+        function () {
+
+            if (savedPlan.length === 0) {
+
+                alert(
+                    "Your Action Plan is already empty."
+                );
+
+                return;
+            }
+
+
+            const confirmed =
+                window.confirm(
+                    "Clear all saved opportunities from your Action Plan?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            savedPlan = [];
+
+            persistSavedPlan();
+
+            renderActionPlan();
+        }
+    );
+}
+
+
+/* =========================================================
+   PRINT ACTION PLAN
+   ========================================================= */
+
+if (printPlanButton) {
+
+    printPlanButton.addEventListener(
+        "click",
+        function () {
+
+            if (savedPlan.length === 0) {
+
+                alert(
+                    "Your Action Plan is empty."
+                );
+
+                return;
+            }
+
+
+            window.print();
+        }
+    );
+}
+
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+renderActionPlan();
+
+
+/* =========================================================
+   CLEAN UP IMAGE MEMORY
+   ========================================================= */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        if (selectedImageUrl) {
+
+            URL.revokeObjectURL(
+                selectedImageUrl
+            );
+
+            selectedImageUrl = null;
+        }
+    }
+);
